@@ -9,8 +9,6 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     
-    List<Appointment> findByConsultationMode(Appointment.ConsultationMode consultationMode);
-    
     List<Appointment> findByConsultationModeAndStatus(
         Appointment.ConsultationMode consultationMode,
         Appointment.AppointmentStatus status

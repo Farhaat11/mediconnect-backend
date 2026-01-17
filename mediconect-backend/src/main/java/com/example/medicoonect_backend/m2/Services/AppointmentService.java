@@ -27,10 +27,6 @@ public class AppointmentService {
         return appointmentRepository.findAll();
     }
 
-    public List<Appointment> getAppointmentsByConsultationMode(Appointment.ConsultationMode consultationMode) {
-        return appointmentRepository.findByConsultationMode(consultationMode);
-    }
-
     @Transactional
     public Appointment updateAppointmentStatus(Long id, Appointment.AppointmentStatus status) {
         Optional<Appointment> appointmentOptional = appointmentRepository.findById(id);
@@ -47,5 +43,37 @@ public class AppointmentService {
             Appointment.ConsultationMode.VIRTUAL,
             Appointment.AppointmentStatus.UPCOMING
         );
+    }
+
+    public Appointment getAppointmentById(Long id) {
+        return appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
+    }
+
+    @Transactional
+    public Appointment updateAppointment(Long id, Appointment updatedAppointment) {
+        Appointment existingAppointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
+        
+        existingAppointment.setPatientName(updatedAppointment.getPatientName());
+        existingAppointment.setPatientPhone(updatedAppointment.getPatientPhone());
+        existingAppointment.setPatientEmail(updatedAppointment.getPatientEmail());
+        existingAppointment.setPatientAge(updatedAppointment.getPatientAge());
+        existingAppointment.setDoctorSpecialization(updatedAppointment.getDoctorSpecialization());
+        existingAppointment.setDoctorName(updatedAppointment.getDoctorName());
+        existingAppointment.setAppointmentDate(updatedAppointment.getAppointmentDate());
+        existingAppointment.setTimeSlot(updatedAppointment.getTimeSlot());
+        existingAppointment.setConsultationMode(updatedAppointment.getConsultationMode());
+        existingAppointment.setStatus(updatedAppointment.getStatus());
+        
+        return appointmentRepository.save(existingAppointment);
+    }
+
+    @Transactional
+    public void deleteAppointment(Long id) {
+        if (!appointmentRepository.existsById(id)) {
+            throw new RuntimeException("Appointment not found with id: " + id);
+        }
+        appointmentRepository.deleteById(id);
     }
 }
